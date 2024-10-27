@@ -1,0 +1,36 @@
+{% load static %}
+<form method="post">
+    {% csrf_token %}
+  
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card border-light shadow-sm rounded-3">
+                    <div class="card-header bg-primary text-white text-center py-3 rounded-top">
+                        <h4 class="mb-0"> Marca</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            {{ form.non_field_errors }}
+                            {{ form.as_p }}
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light text-center py-3 rounded-bottom">
+                        <button class="btn btn-primary px-4" type="submit">Enviar Información</button>
+                        <a class="btn btn-secondary px-4 ms-2" href="{% url 'marcas' %}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+<link rel="stylesheet" href="{% static 'css/modo_darks.css' %}?V1.3">
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/validaciones_form/vC-M-P-U.js' %}"></script>
+{% endblock %}
+  </form>

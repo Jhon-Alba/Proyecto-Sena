@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Bonanza</title>
+  <link href="{% static 'img/logo.png' %}" rel="icon">
+  <link href="{% static 'css/inicio.css' %}" rel="stylesheet">
+</head>
+
+<body>
+  <div class="background-image" style="background: url('{% static 'img/carrito.jpg' %}') no-repeat center center; background-size: cover;"  title="El Cronista, 2023 [Imagen].">
+    <header id="header">
+      <a class="getstarted" href="{% url 'login' %}" title="Iniciar sesión">Iniciar sesión</a>
+
+    </header>
+  </div>
+</body>
+</html>

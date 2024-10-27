@@ -1,0 +1,101 @@
+{% extends "dashboard.html" %}
+{% block titulo %} {% if formulario.instance.pk %}Editar{% else %}Crear{% endif %} compra {% endblock %}
+{% block contenido %}
+<div class="card">
+    <div class="card-header">{% if formulario.instance.pk %}Editar{% else %}Agregar{% endif %} compra</div>
+    <div class="card-body">
+        <h4 class="card-title">Datos de la compra</h4>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="productos" class="form-label">Seleccionar Productos:</label>
+                <select id="productos" name="productos" class="form-select" multiple required>
+                    {% for producto in productos %}
+                        <option value="{{ producto.id }}" data-precio="{{ producto.precio }}">{{ producto.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div id="product-inputs">
+                <!-- Los inputs para cantidad y valor unitario se generarán aquí dinámicamente -->
+            </div>
+            <div class="mb-3">
+                <label for="fechaingreso" class="form-label">Fecha de Ingreso:</label>
+                <input type="date" id="fechaingreso" name="fechaingreso" class="form-control" value="{{ formulario.fechaingreso.value|date:'Y-m-d' }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="valortotal" class="form-label">Valor Total:</label>
+                <input type="number" id="valortotal" name="valortotal" class="form-control" step="0.01" value="{{ formulario.valortotal.value }}" readonly>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-success">Guardar</button>
+                <a class="btn btn-warning" href="{% url 'compra' %}" role="button">Volver</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#productos').select2();
+
+        const fechaInput = document.getElementById('fechaingreso');
+        const valorTotalInput = document.getElementById('valortotal');
+        
+        const isEditMode = window.location.href.includes("editar");
+
+        function establecerFechaMinima() {
+            const today = new Date().toISOString().split('T')[0];
+            if (!isEditMode) {
+                fechaInput.setAttribute('min', today);
+            } else {
+                fechaInput.removeAttribute('min');
+            }
+        }
+
+        function calcularValorTotal() {
+            let valorTotal = 0;
+            $('.product-row').each(function() {
+                const cantidad = parseFloat($(this).find('.cantidad-input').val()) || 0;
+                const valorUnitario = parseFloat($(this).find('.valorunitario-input').val()) || 0;
+                valorTotal += cantidad * valorUnitario;
+            });
+            valorTotalInput.value = valorTotal.toFixed(2);
+        }
+
+        $(document).on('input', '.cantidad-input', calcularValorTotal);
+
+        $('#productos').on('change', function() {
+            const selectedProducts = $(this).val();
+            let productInputs = '';
+            selectedProducts.forEach(function(productId) {
+                const productOption = $('#productos option[value="' + productId + '"]');
+                const productName = productOption.text();
+                const productPrice = productOption.data('precio');
+                productInputs += `
+                    <div class="product-row mb-3">
+                        <input type="hidden" name="producto_ids[]" value="${productId}">
+                        <h5>${productName}</h5>
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label">Cantidad:</label>
+                                <input type="number" class="form-control cantidad-input" name="cantidades[]" required>
+                            </div>
+                            <div class="col">
+                                <label class="form-label">Valor Unitario:</label>
+                                <input type="number" class="form-control valorunitario-input" name="valorunitarios[]" step="0.01" value="${productPrice}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            $('#product-inputs').html(productInputs);
+            calcularValorTotal();
+        });
+
+        establecerFechaMinima();
+    });
+</script>
+{% endblock %}

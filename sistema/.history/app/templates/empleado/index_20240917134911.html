@@ -1,0 +1,152 @@
+{% extends "dashboard.html" %}
+{% block titulo %} Empleados {% endblock %}
+{% load static %}
+
+{% block contenido %}
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+<link rel="stylesheet" href="{% static 'css/mensajes_exito.css' %}">
+<link rel="stylesheet" href="{% static 'css/custom_buttons.css' %}">
+<link rel="stylesheet" href="{% static 'css/confirmacionelim.css' %}">
+<link href="https://cdn.datatables.net/v/bs5/dt-2.1.6/datatables.min.css" rel="stylesheet">
+
+{% endblock %}
+
+{% if messages %}
+  <div id="message" class="alert alert-info custom-message">
+    {% for message in messages %}
+      <i class="fas fa-check-circle"></i>
+      <p>{{ message }}</p>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% if not has_permission %}
+  <div class="alert alert-custom alert-custom-container" role="alert">
+    <strong>Acceso Denegado : </strong> No tienes permiso para ver esta información.
+  </div>
+{% else %}
+  <div class="card shadow-lg rounded">
+    <div class="card-header">
+      <a href="{% url 'empleado_crear' %}" class="btn btn-outline-success" title="Crea un empleado">
+        <i class="fas fa-plus"></i> Agregar nuevo empleado
+      </a>
+      <a name="" id="" type="button" class="btn btn-outline-primary" href="{% url 'reporte_empleados_pdf' %}" role="button" title="Descarga reporte pdf"><i class="fas fa-file-pdf"></i> Descargar Reporte PDF</a>
+      <a name="" id="" type="button" class="btn btn-outline-info" href="{% url 'reporte_empleados_excel' %}" role="button" title="Descarga reporte excel"><i class="fas fa-file-excel"></i> Descargar Reporte Excel</a>
+    </div>
+   
+
+    <div class="card-body">
+      <h4 class="card-title">Listado de Empleados</h4>
+      <div class="table-responsive">
+        <form method="GET" action="{% url 'empleado_lista' %}">
+          <div class="row mb-3">
+            <div class="col-md-3" title="Buscar por nombre">
+              <input type="text" class="form-control" name="buscar_nombre" placeholder="Buscar empleados..." value="{{ buscar_nombre }}">
+            </div>
+            <div class="col-md-3" title="Buscar por número de celular">
+              <input type="text" class="form-control" name="buscar_celular" placeholder="Número de celular" value="{{ buscar_celular }}">
+            </div>
+           
+    
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6" title="Filtrar por estado">
+              <select name="estado" class="form-control">
+                <option value="">Filtrar estado (Todos)</option>
+                <option value="activado" {% if estado_filtro == "activado" %}selected{% endif %}>Activo</option>
+                <option value="inactivado" {% if estado_filtro == "inactivado" %}selected{% endif %}>Inactivo</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-group" title="Buscar entre Empleados">
+            <button type="submit" class="btn btn-outline-info">Buscar</button>
+          </div>
+        </form>
+
+        <hr>
+
+        <table id="myTable" class="table table-hover table-bordered">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Tipo de documento</th>
+              <th>Número de documento</th>
+              <th>Teléfono</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for empleado in empleados %}
+            <tr class="{% cycle 'table-light' 'table-secondary' %}">
+              <td>{{ empleado.id }}</td>
+              <td>{{ empleado.nombre }}</td>
+               <td>{{ empleado.tipo_documento }}</td>
+              <td>{{ empleado.numero_documento }}</td>
+              <td>{{ empleado.telefono }}</td>
+             
+              
+              <td>
+                <span class="badge {% if empleado.activado %}bg-success{% else %}bg-secondary{% endif %}">
+                  {{ empleado.activado|yesno:"Activo,Inactivo" }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  {% if empleado.activado %}
+                    <a href="{% url 'desactivar_empleado' administrador.id %}" class="btn custom-btn-warning btn-separator" title="Desactivar administrador">
+                      <i class="fas fa-ban"></i> Desactivar
+                    </a>
+                  {% else %}
+                    <a href="{% url 'activar_administrador' administrador.id %}" class="btn custom-btn-success btn-separator" title="Activar administrador">
+                      <i class="fas fa-check-circle"></i> Activar
+                    </a>
+                  {% endif %}
+                  <a href="{% url 'administrador_editar' administrador.id  %}" class="btn custom-btn-primary btn-separator" title="Editar administrador">
+                    <i class="fas fa-edit"></i> Editar
+                  </a>
+                  <a href="{% url 'eliminar_administrador' administrador.id %}" class="btn custom-btn-danger btn-delete btn-separator" title="Borrar administrador">
+                    <i class="fas fa-trash-alt"></i> Borrar
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar este Administrador?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <a id="confirmDelete" href="#" class="btn btn-danger">Eliminar</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer text-muted">Fin del listado</div>
+  </div>
+{% endif %}
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/v/bs5/dt-2.1.6/datatables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/confirmacion_elim/cb_proveedores.js' %}"></script>
+<script src="{% static 'js/mensajes_exito/exito.js' %}"></script>
+<script src="{% static 'js/Paginacion/paginacion.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,126 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+
+body {
+  background-color: #fdf6f6;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('../img/login3.5.jpeg'); 
+}
+
+.login-container {
+  background-color: rgba(7, 7, 7, 0.7); 
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(10, 76, 218, 0.2); 
+  width: 80%;
+  max-width: 800px; 
+  display: flex;
+  align-items: center;
+}
+
+.form-container {
+  width: 60%; 
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 10px 10px 40px; 
+  font-size: 16px;
+  border: 1px solid #0c0b0b; 
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.icono-input {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 16px;
+}
+
+.show-password {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.show-password:hover {
+  color: #333;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #007bff; 
+  color: #fff; 
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: #0056b3;
+}
+
+.extra-options {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #f6f6f7; 
+  display: flex;
+  justify-content: space-between;
+}
+
+.forgot-password-link {
+  color: #007bff; 
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.forgot-password-link:hover {
+  color: #0056b3; 
+}
+
+.error-message {
+  color: #ff4d4d; 
+  font-size: 14px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+.logo-container {
+  width: 40%; 
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+}
+
+.logo-container img {
+  max-width: 100%; 
+  height: auto;
+}
+
+.login-title {
+  color: #fff;
+}

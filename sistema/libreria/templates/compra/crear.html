@@ -1,0 +1,14 @@
+{% extends "dashboard.html" %}
+{% block titulo %} crear compra {% endblock %}
+{% block contenido %}
+<div class="card">
+    <div class="card-header"> Agregar compra</div>
+    <div class="card-body">
+        <h4 class="card-title">datos de la compra </h4>
+        {% include 'compra/form.html' %}
+    </div>
+    
+</div>
+{% endblock %}
+
+

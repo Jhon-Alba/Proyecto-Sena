@@ -1,0 +1,57 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card border-light shadow-sm rounded-3">
+                    <div class="card-header bg-primary text-white text-center py-3 rounded-top">
+                        <h4 class="mb-0">{{ titulo }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            {% for field in form.visible_fields %}
+                            <div class="form-group">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                                {{ field|add_class:'form-control'|attr:'autocomplete:off' }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                      <div class="card-footer bg-light text-center py-3 rounded-bottom">
+                        <button class="btn btn-primary px-4" type="submit">Enviar información</button>
+                        <a class="btn btn-secondary px-4 ms-2" href="{{ listar_url }}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if form.errors %}
+    <script>
+        var errors = '';
+        {% for field in form %}
+        {% for error in field.errors %}
+        errors += '{{ error }}\n';
+        {% endfor %}
+        {% endfor %}
+
+        Swal.fire({
+            title: 'Error!',
+            text: errors,
+            icon: 'error',
+        });
+    </script>
+    {% endif %}
+</form>
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/validaciones_form/vProveedores.js' %}"></script>
+{% endblock %}

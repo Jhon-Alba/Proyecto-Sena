@@ -1,0 +1,14 @@
+.alert-custom {
+    background-color: #ff4d4d; /* Rojo vivo */
+    color: white;
+    border-radius: 0.25rem;
+    padding: 15px 20px;
+    margin: 50px auto; /* Centrado horizontal */
+    max-width: 600px; /* Ancho máximo de la alerta */
+    text-align: center; /* Centrar texto */
+  }
+  .alert-custom-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 100px; /* Aumenta el espacio desde el contenido superior */
+}

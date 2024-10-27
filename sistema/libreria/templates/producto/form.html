@@ -1,0 +1,62 @@
+{% load static %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+   
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+               
+                <div class="card border-light shadow-sm rounded-3">
+                    <div class="card-header bg-primary text-white text-center py-3 rounded-top">
+                        <h4 class="mb-0">Producto</h4>
+                    </div>
+                    <div class="card-body">
+                        {{ form.non_field_errors }}
+                        {% for field in form %}
+                            <div class="mb-3">
+                                {% if field.name == 'nombre' %}
+                                    <label for="{{ field.id_for_label }}">Nombre:</label>
+                                {% elif field.name == 'precio' %}
+                                    <label for="{{ field.id_for_label }}">Precio:</label>
+                                {% elif field.name == 'categoria' %}
+                                    <label for="{{ field.id_for_label }}">Categoría:</label>
+                                {% elif field.name == 'marca' %}
+                                    <label for="{{ field.id_for_label }}">Marca:</label>
+                                {% elif field.name == 'proveedor' %}
+                                    <label for="{{ field.id_for_label }}">Proveedor:</label>                                
+                                {% elif field.name == 'presentacion' %}
+                                    <label for="{{ field.id_for_label }}">Presentación:</label>
+                                {% elif field.name == 'unidad_medida' %}
+                                    <label for="{{ field.id_for_label }}">Unidad de medida:</label>
+                                {% elif field.name == 'activado' %}
+                                    <label for="{{ field.id_for_label }}">Activado:</label>
+                                {% else %}
+                                    {{ field.label_tag }}
+                                {% endif %}
+                                {{ field }}
+                                {% for error in field.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="card-footer bg-light text-center py-3 rounded-bottom">
+                        <button class="btn btn-primary px-4" type="submit">Enviar información</button>
+                        <a class="btn btn-secondary px-4 ms-2" href="{% url 'producto' %}">Cancelar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+<link rel="stylesheet" href="{% static 'css/modo_darks.css' %}?V1.3">
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/validaciones_form/vProductos.js' %}"></script>
+{% endblock %}
+</form>

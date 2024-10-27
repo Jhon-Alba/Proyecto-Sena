@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo de Compra con Selección de Productos</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .actions button {
+            margin: 0 5px;
+        }
+        .module {
+            margin-bottom: 20px;
+        }
+        #productDialog {
+            display: none;
+            position: fixed;
+            top: 20%;
+            left: 20%;
+            width: 60%;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        #productDialog button {
+            margin-top: 10px;
+        }
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <h1>Módulo de Compra</h1>
+    <div class="module" id="purchaseModule">
+        <form id="purchaseForm">
+            <div>
+                <label for="product">Producto:</label>
+                <input type="text" id="productName" readonly>
+                <button type="button" onclick="openProductDialog()">Seleccionar Producto</button>
+            </div>
+            <div>
+                <label for="quantity">Cantidad:</label>
+                <input type="number" id="quantity" min="1" required>
+            </div>
+            <div>
+                <button type="button" onclick="addProduct()">Agregar Producto</button>
+            </div>
+            <table id="purchaseTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre del Producto</th>
+                        <th>Fecha de Ingreso</th>
+                        <th>Cantidad</th>
+                        <th>Valor Unitario</th>
+                        <th>Valor Total</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Las filas se llenarán mediante JavaScript -->
+                </tbody>
+            </table>
+            <div>
+                <button type="submit">Registrar Compra</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Para seleccionar producto -->
+    <div id="overlay"></div>
+    <div id="productDialog">
+        <h2>Seleccionar Producto</h2>
+        <input type="text" id="searchBox" onkeyup="filterProducts()" placeholder="Buscar producto...">
+        <table id="dialogProductTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre del Producto</th>
+                    <th>Valor Unitario</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Los productos se llenarán mediante JavaScript -->
+            </tbody>
+        </table>
+        <button onclick="closeProductDialog()">Cerrar</button>
+    </div>
+
+    <script>
+        let selectedProduct = null;
+
+        // Lista de productos
+        const products = [
+            { id: 1, name: 'Producto A', unitPrice: 10 },
+            { id: 2, name: 'Producto B', unitPrice: 20 },
+            { id: 3, name: 'Producto C', unitPrice: 30 }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateProductTable();
+        });
+
+        function populateProductTable() {
+            const dialogProductTableBody = document.querySelector('#dialogProductTable tbody');
+            dialogProductTableBody.innerHTML = ''; // Limpiar la tabla antes de llenarla
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.id}</td>
+                    <td>${product.name}</td>
+                    <td>${product.unitPrice}</td>
+                    <td><button onclick="selectProduct(${product.id})">Seleccionar</button></td>
+                `;
+                dialogProductTableBody.appendChild(row);
+            });
+        }
+
+        function openProductDialog() {
+            document.getElementById('productDialog').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closeProductDialog() {
+            document.getElementById('productDialog').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function selectProduct(id) {
+            selectedProduct = products.find(p => p.id === id);
+            if (selectedProduct) {
+                document.getElementById('productName').value = selectedProduct.name;
+            }
+            closeProductDialog();
+        }
+
+        function addProduct() {
+            if (!selectedProduct) {
+                alert('Por favor, selecciona un producto');
+                return;
+            }
+
+            const quantityInput = document.getElementById('quantity');
+            const quantity = parseInt(quantityInput.value);
+            if (isNaN(quantity) || quantity < 1) {
+                alert('Cantidad inválida');
+                return;
+            }
+
+            const tableBody = document.querySelector('#purchaseTable tbody');
+            const date = new Date().toLocaleDateString();
+            const totalValue = selectedProduct.unitPrice * quantity;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${selectedProduct.id}</td>
+                <td>${selectedProduct.name}</td>
+                <td>${date}</td>
+                <td>${quantity}</td>
+                <td>${selectedProduct.unitPrice}</td>
+                <td>${totalValue}</td>
+                <td>Activo</td>
+                <td class="actions">
+                    <button onclick="editProduct(this)">Editar</button>
+                    <button onclick="removeProduct(this)">Eliminar</button>
+                </td>
+            `;
+
+            tableBody.appendChild(row);
+            selectedProduct = null;
+            document.getElementById('productName').value = '';
+            quantityInput.value = '';
+        }
+
+        function editProduct(button) {
+            const row = button.closest('tr');
+            const cells = row.querySelectorAll('td');
+            
+            const quantity = prompt('Nueva cantidad:', cells[3].textContent);
+            
+            if (quantity) {
+                cells[3].textContent = quantity;
+                const unitPrice = parseFloat(cells[4].textContent);
+                const totalValue = unitPrice * parseInt(quantity);
+                cells[5].textContent = totalValue;
+            }
+        }
+
+        function removeProduct(button) {
+            const row = button.closest('tr');
+            row.remove();
+        }
+
+        function filterProducts() {
+            const searchBox = document.getElementById('searchBox').value.toLowerCase();
+            const rows = document.querySelectorAll('#dialogProductTable tbody tr');
+            
+            rows.forEach(row => {
+                const productName = row.cells[1].textContent.toLowerCase();
+                if (productName.includes(searchBox)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        document.getElementById('purchaseForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            alert('Compra registrada con éxito');
+        });
+    </script>
+</body>
+</html>

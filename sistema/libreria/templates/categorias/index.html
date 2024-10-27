@@ -1,0 +1,115 @@
+{% extends "dashboard.html" %}
+{% block titulo %} Categorías {% endblock %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/mensajes_exito.css' %}">
+<link rel="stylesheet" href="{% static 'css/custom_buttons.css' %}">
+<link rel="stylesheet" href="{% static 'css/confirmacionelim.css' %}">
+<link rel="stylesheet" href="{% static 'css/modo_darks.css' %}?V1.2">
+<link href="https://cdn.datatables.net/v/bs5/dt-2.1.6/datatables.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block contenido %}
+
+
+{% if messages %}
+  <div id="message" class="alert alert-info custom-message">
+    {% for message in messages %}
+      <i class="fas fa-check-circle"></i>
+      <p>{{ message }}</p>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="card shadow-lg rounded">
+  <div class="card-header">
+    <a name="" id="" type="button" class="btn btn-outline-success" href="{% url 'crear_categorias' %}" role="button" title="Crea una categoría"><i class="fas fa-plus"></i> Agregar nueva Categoría</a>
+    <a href="{% url 'reporte_pdf_categorias' %}" class="btn btn-outline-primary" role="button" target="_blank" title="Descargar reporte pdf"><i class="fas fa-file-pdf"></i> Descargar Reporte PDF</a>
+    <a href="{% url 'reporte_excel_categorias' %}" class="btn btn-outline-info" role="button" title="Descargar reporte excel"><i class="fas fa-file-excel"></i> Descargar Reporte Excel</a>
+  </div>
+  <div class="card-body">
+    <h4 class="card-title">Listado de Categorías</h4>
+    <div class="table-responsive">
+      <hr>
+
+      <table id="myTable" class="table table-hover table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <div class="col-md-4" title="Filtrar por estado">
+          <select id="estadoFilter" class="form-control">
+            <option value="">Filtrar estado (Todos)</option>
+            <option value="activado">Activo</option>
+            <option value="inactivado">Inactivo</option>
+          </select>
+        </div>
+        <tbody>
+          {% for Categoria in categorias %}
+          <tr class="{% cycle 'table-light' 'table-secondary' %}">
+            <td>{{ Categoria.id }}</td>
+            <td>{{ Categoria.nombre }}</td>
+            <td>
+              <span class="badge {% if Categoria.activado %}bg-success{% else %}bg-secondary{% endif %}">
+                {{ Categoria.activado|yesno:"Activo,Inactivo" }}
+              </span>
+            </td>
+            <td>
+              <div class="btn-group" role="group">
+                {% if Categoria.activado %}
+                  <a href="{% url 'desactivar_categoria' Categoria.id %}" type="button" class="btn custom-btn-warning btn-separator" title="Desactivar categoría"><i class="fas fa-ban"></i> Desactivar</a>
+                {% else %}
+                  <a href="{% url 'activar_categoria' Categoria.id %}" type="button" class="btn custom-btn-success btn-separator" title="Activar categoría"><i class="fas fa-check-circle"></i> Activar</a>
+                {% endif %}
+                <a href="{% url 'editar_categorias' Categoria.id %}" type="button" class="btn custom-btn-primary btn-separator" title="Edicar categoría"><i class="fas fa-edit"></i> Editar</a>
+                <a href="{% url 'eliminar_categorias' Categoria.id %}" type="button" class="btn custom-btn-danger btn-delete btn-separator" title="Borrar categoría"><i class="fas fa-trash-alt"></i> Borrar</a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+ 
+      <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmModalLabel">Confirmación</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              ¿Estás seguro de que deseas eliminar esta Categoria?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <a id="confirmDelete" href="#" class="btn btn-danger">Eliminar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+  <div class="card-footer text-muted">Fin del listado</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/v/bs5/dt-2.1.6/datatables.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<script src="{% static 'js/confirmacion_elim/cb_categorias.js' %}"></script>
+<script src="{% static 'js/mensajes_exito/exito.js' %}"></script>
+<script src="{% static 'js/Paginacion/paginacion.js' %}"></script>
+<script src="{% static 'js/Paginacion/modo_dark.js' %}"></script>
+
+{% endblock %}

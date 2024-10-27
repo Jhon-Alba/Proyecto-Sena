@@ -1,0 +1,215 @@
+.dark-mode .card-header{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .btn{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .form-control{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .card-body{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .table-light{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode tbody{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .dt-length{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode select{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode th{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .table-dark{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode span{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+
+    .dark-mode .card-footer {
+        background-color: #414141; /* Fondo oscuro */
+        color: #ffffff; /* Texto blanco */
+    }
+/* Estilos base de la clase card-footer */
+.card-footer.bg-light {
+    background-color: #f8f9fa; /* Fondo claro por defecto */
+    color: #000000; /* Texto en negro por defecto */
+}
+
+/* Estilos para el modo oscuro */
+.dark-mode .card-footer.bg-light {
+    background-color: #414141; /* Fondo oscuro */
+    color: #ffffff; /* Texto blanco */
+}
+.dark-mode .text-muted{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+
+.dark-mode .modal-body{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .modal-content{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .modal-header{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .btn{
+    background-color:#353333;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .btn-close{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+
+.dark-mode #myTable_wrapper{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .pagination{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode nav{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode ul{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .dt-paging{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .page-link{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode table{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode option{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .card{
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .card-header{
+    background:#1a1919;
+    background-color: #1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .card-header {
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode input {
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+.dark-mode .form-group {
+    background-color:#1a1919;
+    border-bottom:  #444343;;
+    color: #ffffff;
+}
+
+
+
+.dark-mode table.table.dataTable tbody, 
+.dark-mode table.table.dataTable tr, 
+.dark-mode table.table.dataTable td {
+    background-color: #1b1b1b !important;  /* Color de fondo verde */
+    border-bottom: 1px solid #444343 !important;  /* Borde oscuro */
+    color: #ffffff !important;  /* Texto blanco */
+}
+
+
+
+
+
+
+.dark-mode .card{
+    background-color: #1b1b1b !important;  /* Color de fondo verde */
+    border-bottom: 1px solid #444343 !important;  /* Borde oscuro */
+    color: #ffffff !important;  /* Texto blanco */
+}
+
+
+
+
+
+
+/* Estilos para el modo oscuro */
+.dark-mode .card {
+    background-color: #333 !important;  /* Color de fondo oscuro */
+    color: #fff !important;  /* Texto blanco en modo oscuro */
+    border-color: rgba(255, 255, 255, .125) !important;  /* Borde en modo oscuro */
+}
+
+.dark-mode  .card.shadow-lg.rounded{
+    background-color: #333;
+    color: #fff ;
+    border-color: rgba(255, 255, 255, .125);
+}
+
+
+.dark-mode .card-body{
+    background-color: #1c1c1c;
+    border-bottom: #444343;
+    color: #ffffff
+}

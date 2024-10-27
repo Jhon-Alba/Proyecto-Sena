@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>{% block titulo %}Venta{% endblock %}</title>
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Formulario de Venta</h1>
+    <form id="saleForm" method="post" action="{% url 'crear_venta' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label for="productos" class="form-label">Seleccionar Productos:</label>
+            <select id="productos" name="productos" class="form-select" multiple required>
+                {% for producto in productos %}
+                    <option value="{{ producto.id }}" data-precio="{{ producto.precio }}" data-stock="{{ producto.stock }}">
+                        {{ producto.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <table id="saleTable" class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre del Producto</th>
+                        <th>Cantidad</th>
+                        <th>Valor Unitario</th>
+                        <th>Valor Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Las filas se llenarán mediante JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label for="fechaventa" class="form-label">Fecha de Venta:</label>
+                <input type="date" id="fechaventa" name="fechaventa" class="form-control" required readonly> <!-- Campo deshabilitado -->
+            </div>
+            <div class="col-md-6">
+                <label for="valortotal" class="form-label">Valor Total:</label>
+                <input type="number" id="valortotal" name="valortotal" class="form-control" step="0.01" readonly>
+            </div>
+        </div>
+
+        <!-- Campo "Dinero Entregado" -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label for="dineroentregado" class="form-label">Dinero Entregado:</label>
+                <input type="number" id="dineroentregado" name="dineroentregado" class="form-control" step="0.01" min="0" required>
+            </div>
+            <div class="col-md-6">
+                <label for="devolucion" class="form-label">Devolución:</label>
+                <input type="number" id="devolucion" name="devolucion" class="form-control" step="0.01" readonly>
+            </div>
+        </div>
+
+        <div>
+            <button class="btn btn-primary px-4" type="submit">Enviar Venta</button>
+            <a class="btn btn-warning" href="{% url 'venta' %}" role="button">Volver</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#productos').select2();
+
+        const valorTotalInput = $('#valortotal');
+        const dineroEntregadoInput = $('#dineroentregado');
+        const devolucionInput = $('#devolucion');
+        let selectedProducts = [];
+
+        // Establecer la fecha actual automáticamente y deshabilitar el campo
+        const fechaVentaInput = $('#fechaventa');
+        const today = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+        fechaVentaInput.val(today);  // Asigna la fecha actual
+        fechaVentaInput.prop('readonly', true);  // Deshabilita el campo para que no sea editable
+
+        function calcularValorTotal() {
+            let valorTotal = 0;
+            $('#saleTable tbody tr').each(function() {
+                const cantidad = parseFloat($(this).find('.cantidad-input').val()) || 0;
+                const valorUnitario = parseFloat($(this).find('.valorunitario').text()) || 0;
+                valorTotal += cantidad * valorUnitario;
+            });
+            valorTotalInput.val(valorTotal.toFixed(2));
+            calcularDevolucion(); // Calcular devolución después de actualizar el valor total
+        }
+
+        function calcularDevolucion() {
+            const valorTotal = parseFloat(valorTotalInput.val()) || 0;
+            const dineroEntregado = parseFloat(dineroEntregadoInput.val()) || 0;
+            const devolucion = dineroEntregado - valorTotal;
+            devolucionInput.val(devolucion >= 0 ? devolucion.toFixed(2) : '0.00');
+        }
+
+        $('#productos').on('change', function() {
+            const selectedProductsIds = $(this).val();
+            selectedProducts = selectedProductsIds.map(productId => {
+                const productOption = $('#productos option[value="' + productId + '"]');
+                return {
+                    id: productId,
+                    name: productOption.text(),
+                    price: parseFloat(productOption.data('precio'))
+                };
+            });
+            renderProductInputs();
+        });
+
+        function renderProductInputs() {
+            const tableBody = $('#saleTable tbody');
+            tableBody.empty();
+            selectedProducts.forEach(product => {
+                const stock = $('#productos option[value="' + product.id + '"]').data('stock'); // Obtiene el stock del producto
+                const row = `
+                    <tr>
+                        <td>${product.id}</td>
+                        <td>${product.name}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <input type="number" class="form-control cantidad-input me-2" name="cantidad" value="1" min="1" max="${stock}" required>
+                                <span class="badge bg-info">Stock: ${stock}</span> <!-- Muestra el stock al lado -->
+                            </div>
+                            <input type="hidden" name="nombreproducto" value="${product.name}">
+                            <input type="hidden" name="valorunitario" value="${product.price}">
+                        </td>
+                        <td class="valorunitario">${product.price.toFixed(2)}</td>
+                        <td class="total">${product.price.toFixed(2)}</td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">Eliminar</button>
+                        </td>
+                    </tr>`;
+                tableBody.append(row);
+            });
+            calcularValorTotal();
+            attachInputChangeHandlers();
+        }
+
+        function attachInputChangeHandlers() {
+            $('.cantidad-input').on('change', function() {
+                const row = $(this).closest('tr');
+                const cantidad = parseFloat($(this).val());
+                const valorUnitario = parseFloat(row.find('.valorunitario').text());
+                const total = cantidad * valorUnitario;
+                row.find('.total').text(total.toFixed(2));
+                calcularValorTotal();
+            });
+
+            // Calcular la devolución cada vez que se cambie el dinero entregado
+            dineroEntregadoInput.on('input', calcularDevolucion);
+        }
+
+        window.removeRow = function(button) {
+            $(button).closest('tr').remove();
+            calcularValorTotal();
+        }
+
+        $('#saleForm').on('submit', function(event) {
+            event.preventDefault();
+            $.post($(this).attr('action'), $(this).serialize(), function(response) {
+                window.location.href = "{% url 'venta' %}";
+            }).fail(function() {
+                alert('Error al registrar la venta. Inténtalo de nuevo.');
+            });
+        });
+
+        attachInputChangeHandlers();
+    });
+</script>
+</body>
+</html>

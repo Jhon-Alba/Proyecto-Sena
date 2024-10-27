@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>{% block titulo %}Compra{% endblock %}</title>
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Formulario de Compra</h1>
+    <div id="successMessage" class="alert alert-success d-none" role="alert">
+        Compra registrada exitosamente!
+    </div>
+    <form id="purchaseForm" method="post" action="{% url 'crear_compra' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label for="productos" class="form-label">Seleccionar Productos:</label>
+            <select id="productos" name="productos" class="form-select" multiple required>
+                {% for producto in productos %}
+                    <option value="{{ producto.id }}" data-precio="{{ producto.precio }}" data-proveedor="{{ producto.proveedor }}">{{ producto.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <table id="purchaseTable" class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre del Producto</th>
+                        <th>Proveedor</th>
+                        <th>Cantidad</th>
+                        <th>Valor</th>
+                        <th>SubTotal</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Las filas se llenarán mediante JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label for="fechaingreso" class="form-label">Fecha de Ingreso:</label>
+                <input type="text" id="fechaingreso" name="fechaingreso" class="form-control" readonly>
+            </div>
+            <div class="col-md-6">
+                <label for="valortotal" class="form-label">Valor Total:</label>
+                <input type="number" id="valortotal" name="valortotal" class="form-control" step="0.01" readonly>
+                <div class="error-message" id="totalError"></div>
+            </div>
+        </div>
+
+        <div>
+            <button class="btn btn-primary px-4" type="submit">Enviar información</button>
+            <a class="btn btn-warning" href="{% url 'compra' %}" role="button">Volver</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#productos').select2();
+
+        // Establecer fecha automática
+        const today = new Date().toISOString().split('T')[0];
+        $('#fechaingreso').val(today);
+
+        const valorTotalInput = $('#valortotal');
+        let selectedProducts = [];
+
+        function calcularValorTotal() {
+            let valorTotal = 0;
+            $('#purchaseTable tbody tr').each(function() {
+                const subtotal = parseFloat($(this).find('.total').text()) || 0;
+                valorTotal += subtotal; // Suma el subtotal
+            });
+            valorTotalInput.val(valorTotal.toFixed(2));
+        }
+
+        $('#productos').on('change', function() {
+            const selectedProductsIds = $(this).val();
+            selectedProducts = selectedProductsIds.map(productId => {
+                const productOption = $('#productos option[value="' + productId + '"]');
+                return {
+                    id: productId,
+                    name: productOption.text(),
+                    price: parseFloat(productOption.data('precio')),
+                    proveedor: productOption.data('proveedor')
+                };
+            });
+            renderProductInputs();
+        });
+
+        function renderProductInputs() {
+            const tableBody = $('#purchaseTable tbody');
+            tableBody.empty();
+            selectedProducts.forEach(product => {
+                const row = `
+                    <tr>
+                        <td>${product.id}</td>
+                        <td>${product.name}</td>
+                        <td>${product.proveedor}</td>
+                        <td>
+                            <input type="number" class="form-control cantidad-input" name="cantidad" value="1" min="1" required>
+                            <div class="error-message cantidad-error"></div>
+                            <input type="hidden" name="nombreproducto" value="${product.name}">
+                        </td>
+                        <td>
+                            <input type="number" class="form-control valorunitario-input" name="valorunitario" value="" step="0.01" required placeholder="Ingresar valor unitario">
+                            <div class="error-message valor-error"></div>
+                        </td>
+                        <td class="total">0.00</td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.append(row);
+            });
+            calcularValorTotal();
+            attachInputChangeHandlers();
+        }
+
+        function attachInputChangeHandlers() {
+            $('.valorunitario-input').on('change', function() {
+                const valorUnitario = parseFloat($(this).val()) || 0;
+                const row = $(this).closest('tr');
+                row.find('.total').text(valorUnitario.toFixed(2)); // Actualiza subtotal
+                calcularValorTotal();
+            });
+
+            $('.valorunitario-input').on('focus', function() {
+                if ($(this).val() === '') {
+                    const row = $(this).closest('tr');
+                    const valorPredeterminado = parseFloat(row.find('input[type="hidden"][name="valorunitario"]').val()) || 0;
+                    $(this).val(valorPredeterminado.toFixed(2));
+                }
+            });
+
+            $('.cantidad-input').on('change', function() {
+                calcularValorTotal(); // Actualiza el valor total al cambiar la cantidad
+            });
+        }
+
+        window.removeRow = function(button) {
+            $(button).closest('tr').remove();
+            calcularValorTotal();
+        }
+
+        $('#purchaseForm').on('submit', function(event) {
+            event.preventDefault();
+
+            // Limpiar mensajes de error previos
+            $('.error-message').text('');
+
+            // Validación
+            let isValid = true;
+
+            // Verificar que todas las cantidades sean mayores que cero
+            $('#purchaseTable tbody tr').each(function() {
+                const cantidadInput = $(this).find('.cantidad-input');
+                const cantidad = parseInt(cantidadInput.val()) || 0;
+                const valorUnitarioInput = $(this).find('.valorunitario-input');
+                const valorUnitario = parseFloat(valorUnitarioInput.val()) || 0;
+
+                if (cantidad <= 0) {
+                    isValid = false;
+                    cantidadInput.next('.cantidad-error').text('La cantidad debe ser mayor que cero.');
+                }
+                if (valorUnitario <= 0) {
+                    isValid = false;
+                    valorUnitarioInput.next('.valor-error').text('El valor unitario debe ser mayor que cero.');
+                }
+            });
+
+            // Verificar que el valor total sea mayor que cero
+            const valorTotal = parseFloat(valorTotalInput.val()) || 0;
+            if (valorTotal <= 0) {
+                isValid = false;
+                $('#totalError').text('El valor total debe ser mayor que cero.');
+            }
+
+            if (!isValid) {
+                return; // No continuar con el envío si hay un error
+            }
+
+            // Si es válido, enviar el formulario
+            $.post($(this).attr('action'), $(this).serialize(), function(response) {
+                $('#successMessage').removeClass('d-none'); // Muestra el mensaje de éxito
+                setTimeout(function() {
+                    window.location.href = "{% url 'compra' %}"; // Redirige después de 2 segundos
+                }, 2000);
+            }).fail(function() {
+                alert('Error al registrar la compra. Inténtalo de nuevo.');
+            });
+        });
+
+        attachInputChangeHandlers();
+    });
+</script>
+</body>
+</html>

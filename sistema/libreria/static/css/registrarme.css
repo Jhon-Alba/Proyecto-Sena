@@ -1,0 +1,165 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('../img/login3.5.jpeg'); 
+    background-size: cover;
+    background-position: center;
+}
+
+.card {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: row;
+}
+
+.logo-container {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end; 
+    align-items: center;
+    padding-left: 3rem; 
+}
+
+.logo {
+    max-width: 100%;
+    height: auto;
+}
+
+.form-container {
+    flex: 2;
+    padding-left: 2rem;
+}
+
+.card h2 {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.card p {
+    text-align: center;
+    color: #ccc;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+    width: 100%; 
+    max-width: 450px; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.form-group .error {
+    color: #ff6b6b;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.password-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+}
+
+.submit-btn {
+    width: 100%; 
+    max-width: 200px; 
+    padding: 0.75rem;
+    background-color: #1178bc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.submit-btn:hover {
+    background-color: #2980b9;
+}
+
+.notification-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #13ae53;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    font-size: 1.25rem;
+    display: none;
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.notification-bar.active {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .card {
+        flex-direction: column;
+        max-width: 400px;
+    }
+
+    .logo-container {
+        justify-content: center; 
+        padding-right: 0; 
+        margin-bottom: 2rem;
+    }
+
+    .form-container {
+        padding-left: 0;
+    }
+
+    .form-group {
+        width: 100%; 
+        max-width: none; 
+    }
+
+    .submit-btn {
+        width: 100%; 
+        max-width: none; 
+    }
+}

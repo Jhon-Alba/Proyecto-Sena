@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Compra</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const nombreInput = document.getElementById('nombreproducto');
+            const fechaInput = document.getElementById('fechaingreso');
+            const cantidadInput = document.getElementById('cantidad');
+            const valorUnitarioInput = document.getElementById('valorunitario');
+            const valorTotalInput = document.getElementById('valortotal');
+            
+        
+            const isEditMode = window.location.href.includes("editar");
+
+            nombreInput.addEventListener('input', function(e) {
+                const value = e.target.value;
+                if (/^[^\d\W][a-zA-Z\s]*[a-zA-Z]$/.test(value) === false) {
+                    e.target.setCustomValidity('El nombre solo debe contener letras.');
+                } else {
+                    e.target.setCustomValidity('');
+                }
+            });
+    
+         
+            function establecerFechaMinima() {
+                const today = new Date().toISOString().split('T')[0];
+                if (!isEditMode) {
+                   
+                    fechaInput.setAttribute('min', today);
+                } else {
+                
+                    fechaInput.removeAttribute('min');
+                }
+            }
+    
+           
+            cantidadInput.addEventListener('input', function(e) {
+                const value = e.target.value;
+                if (value <= 0 || !Number.isInteger(Number(value))) {
+                    e.target.setCustomValidity('La cantidad debe ser un número positivo.');
+                } else {
+                    e.target.setCustomValidity('');
+                }
+            });
+    
+         
+            valorUnitarioInput.addEventListener('input', function(e) {
+                const value = e.target.value;
+                if (value <= 0 || isNaN(value)) {
+                    e.target.setCustomValidity('El valor unitario debe ser un número positivo.');
+                } else {
+                    e.target.setCustomValidity('');
+                }
+            });
+    
+          
+            function calcularValorTotal() {
+                const cantidad = parseFloat(cantidadInput.value) || 0;
+                const valorUnitario = parseFloat(valorUnitarioInput.value) || 0;
+                const valorTotal = cantidad * valorUnitario;
+                valorTotalInput.value = valorTotal.toFixed(2);
+            }
+    
+            cantidadInput.addEventListener('input', calcularValorTotal);
+            valorUnitarioInput.addEventListener('input', calcularValorTotal);
+    
+            
+            establecerFechaMinima();
+        });
+    </script>
+</head>
+<body>
+    <h1>Formulario de Compra</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+            <label for="nombreproducto">Nombre del Producto:</label>
+            <input type="text" id="nombreproducto" name="nombreproducto" value="{{ formulario.nombreproducto.value }}" required>
+        </div>
+        <div>
+            <label for="fechaingreso">Fecha de Ingreso:</label>
+            <input type="date" id="fechaingreso" name="fechaingreso" value="{{ formulario.fechaingreso.value|date:'Y-m-d' }}" required>
+        </div>
+        <div>
+            <label for="cantidad">Cantidad:</label>
+            <input type="number" id="cantidad" name="cantidad" value="{{ formulario.cantidad.value }}" required>
+        </div>
+        <div>
+            <label for="valorunitario">Valor Unitario:</label>
+            <input type="number" id="valorunitario" name="valorunitario" step="0.01" value="{{ formulario.valorunitario.value }}" required>
+        </div>
+        <div>
+            <label for="valortotal">Valor Total:</label>
+            <input type="number" id="valortotal" name="valortotal" step="0.01" value="{{ formulario.valortotal.value }}" readonly>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-success">Guardar</button>
+            <a class="btn btn-warning" href="{% url 'compra' %}" role="button">Volver</a>
+        </div>
+    </form>
+</body>
+</html>

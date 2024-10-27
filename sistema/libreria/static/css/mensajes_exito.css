@@ -1,0 +1,30 @@
+#message {
+    position: fixed;
+    top: 50%;
+    left: 50%; 
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center; 
+    padding: 15px; 
+    border-radius: 5px; 
+    background-color: #d4e7ed; 
+    color: #155724; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+    z-index: 9999; 
+}
+
+#message .fa-check-circle {
+    font-size: 1.5rem;
+    color: #28a745; 
+    margin-right: 10px; 
+}
+
+#message p {
+    margin: 0;
+}
+#message.fade {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}

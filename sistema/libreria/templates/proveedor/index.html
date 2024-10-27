@@ -1,0 +1,116 @@
+{% extends "dashboard.html" %}
+{% block titulo %} Proveedores {% endblock %}
+{% load static %}
+{% block contenido %}
+
+{% block extra_css %}
+
+{% endblock %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/mensajes_exito.css' %}">
+<link rel="stylesheet" href="{% static 'css/custom_buttons.css' %}">
+<link rel="stylesheet" href="{% static 'css/confirmacionelim.css' %}">
+<link rel="stylesheet" href="{% static 'css/modo_darks.css' %}?V1.2">
+<link href="https://cdn.datatables.net/v/bs5/dt-2.1.6/datatables.min.css" rel="stylesheet">
+{% if messages %}
+  <div id="message" class="alert alert-info custom-message">
+    {% for message in messages %}
+      <i class="fas fa-check-circle"></i>
+      <p>{{ message }}</p>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="card shadow-lg rounded">
+  <div class="card-header">
+    <a name="" id="" type="button" class="btn btn-outline-success" href="{% url 'crear_proveedor' %}" role="button" title="Crea un proveedor"><i class="fas fa-plus"></i> Agregar nuevo Proveedor</a>
+    <a name="" id="" type="button" class="btn btn-outline-primary" href="{% url 'reporte_proveedores_pdf' %}" role="button" title="Descarga reporte pdf"><i class="fas fa-file-pdf"></i> Descargar Reporte PDF</a>
+    <a name="" id="" type="button" class="btn btn-outline-info" href="{% url 'reporte_proveedores_excel' %}" role="button" title="Descarga reporte excel"><i class="fas fa-file-excel"></i> Descargar Reporte Excel</a>
+  </div>
+  <div class="card-body">
+    <h4 class="card-title">Listado de Proveedores</h4>
+    <div class="table-responsive">
+      <hr>
+
+      <table id="myTable" class="table table-hover table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Número de Celular</th>
+            <th>Correo Electrónico</th>
+            <th>Marca perteneciente</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <div class="col-md-4" title="Filtrar por estado">
+          <select id="estadoFilter" class="form-control">
+            <option value="">Filtrar estado (Todos)</option>
+            <option value="activado">Activo</option>
+            <option value="inactivado">Inactivo</option>
+          </select>
+        </div>
+        <tbody>
+          {% for proveedor in proveedores %}
+          <tr class="{% cycle 'table-light' 'table-secondary' %}">
+            <td>{{ proveedor.id }}</td>
+            <td>{{ proveedor.nombre }}</td>
+            <td>{{ proveedor.numero_celular }}</td>
+            <td>{{ proveedor.correo_electronico }}</td>
+            <td>{{ proveedor.marca }}</td>
+            <td>
+              <span class="badge {% if proveedor.activado %}bg-success{% else %}bg-secondary{% endif %}">
+                {{ proveedor.activado|yesno:"Activo,Inactivo" }}
+              </span>
+            </td>
+            <td>
+              <div class="btn-group" role="group">
+                {% if proveedor.activado %}
+                  <a href="{% url 'desactivar_proveedor' proveedor.id %}" type="button" class="btn custom-btn-warning btn-separator" title="Desactivar proveedor"><i class="fas fa-ban"></i> Desactivar</a>
+                {% else %}
+                  <a href="{% url 'activar_proveedor' proveedor.id %}" type="button" class="btn custom-btn-success btn-separator" title="Activar proveedor"><i class="fas fa-check-circle"></i> Activar</a>
+                {% endif %}
+                <a href="{% url 'editar_proveedor' proveedor.id %}" type="button" class="btn custom-btn-primary btn-separator" title="Editar proveedor"><i class="fas fa-edit"></i> Editar</a>
+                <a href="{% url 'eliminar_proveedor' proveedor.id %}" type="button" class="btn custom-btn-danger btn-delete btn-separator" title="Borrar proveedor"><i class="fas fa-trash-alt"></i> Borrar</a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+   
+      <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmModalLabel">Confirmación</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              ¿Estás seguro de que deseas eliminar este Proveedor?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <a id="confirmDelete" href="#" class="btn btn-danger">Eliminar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="card-footer text-muted">Fin del listado</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/v/bs5/dt-2.1.6/datatables.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<script src="{% static 'js/confirmacion_elim/cb_proveedores.js' %}"></script>
+<script src="{% static 'js/mensajes_exito/exito.js' %}"></script>
+<script src="{% static 'js/Paginacion/paginacion.js' %}"></script>
+{% endblock %}

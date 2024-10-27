@@ -1,0 +1,89 @@
+body {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+    margin: 0; 
+    font-family: 'Segoe UI', Geneva, sans-serif; 
+    background-image: url('../img/carritosin.jpg'); 
+    background-repeat: no-repeat; 
+    background-size: cover; 
+}
+
+
+.login-box {
+    width: 100%; 
+    max-width: 400px; 
+    padding: 30px; 
+    border-radius: 10px;
+    background: #ffffff; 
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); 
+    text-align: center; 
+}
+
+
+.card-header img {
+    width: 180px; 
+    height: auto; 
+    margin-bottom: -50px; 
+}
+
+
+.login-box-msg {
+    font-size: 23px; 
+    font-weight: 700; 
+    margin-bottom: 25px; 
+    color: #333; 
+}
+
+
+.form-control {
+    border: 1px solid #ced4da;
+    border-radius: 10px; 
+    padding: 15px; 
+    font-size: 17px; 
+    width: 100%; 
+    box-sizing: border-box; 
+    text-align: center; 
+    transition: border-color 0.3s, box-shadow 0.3s; 
+}
+
+
+.form-control::placeholder {
+    color: #6c757d; 
+    font-size: 17px; 
+    text-align: center; 
+}
+
+
+.form-control:focus {
+    border-color: #007bff; 
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25); 
+    outline: none; 
+}
+
+
+.btn-primary {
+    background-color: #007bff; 
+    border-color: #007bff;
+    border-radius: 5px; 
+    padding: 13px;
+    font-size: 16px;
+    font-weight: 800; 
+    transition: background-color 0.3s, border-color 0.3s; 
+}
+
+
+.btn-primary:hover {
+    background-color: #0056b3; 
+    border-color: #004085; 
+}
+
+.btn-primary:focus {
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); 
+}
+
+
+.input-group {
+    margin-bottom: 30px; 
+}

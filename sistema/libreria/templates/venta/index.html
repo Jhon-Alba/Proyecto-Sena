@@ -1,0 +1,143 @@
+{% extends "dashboard.html" %}
+{% block titulo %} Ventas {% endblock %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/mensajes_exito.css' %}">
+<link rel="stylesheet" href="{% static 'css/custom_buttons.css' %}">
+<link rel="stylesheet" href="{% static 'css/confirmacionelim.css' %}">
+<link href="https://cdn.datatables.net/v/bs5/dt-2.1.6/datatables.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/modo_darks.css' %}?V1.2">
+{% endblock %}
+
+{% block contenido %}
+
+
+{% if messages %}
+  <div id="message" class="alert alert-info custom-message">
+    {% for message in messages %}
+      <i class="fas fa-check-circle"></i>
+      <p>{{ message }}</p>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="card shadow-lg rounded">
+  <div class="card-header">
+    <a name="" id="" type="button" class="btn btn-outline-success" href="{% url 'crear_venta' %}" role="button"><i class="fas fa-plus"></i> Agregar nueva venta</a>
+    <a name="" id="" type="button" class="btn btn-outline-primary" href="{% url 'reporte_ventas_pdf' %}" role="button"><i class="fas fa-file-pdf"></i> Descargar Reporte PDF</a>
+    <a name="" id="" type="button" class="btn btn-outline-info" href="{% url 'reporte_ventas_excel' %}" role="button"><i class="fas fa-file-excel"></i> Descargar Reporte Excel</a>
+  </div>
+  <div class="card-body">
+    <h4 class="card-title">Listado de ventas</h4>
+
+    <form method="GET">
+      <div class="row">
+        <div class="col-md-3">
+          <label for="start_date" class="form-label">Fecha inicio</label>
+          <input type="date" id="start_date" name="start_date" class="form-control">
+        </div>
+        <div class="col-md-3">
+          <label for="end_date" class="form-label">Fecha fin</label>
+          <input type="date" id="end_date" name="end_date" class="form-control">
+        </div>
+        <div class="col-md-3 align-self-end">
+          <button type="submit" class="btn btn-outline-primary" formaction="{% url 'reporte_ventas_pdf' %}">
+            <i class="fas fa-file-pdf"></i> Descargar reporte PDF
+          </button>
+        </div>
+        <div class="col-md-3 align-self-end">
+          <button type="submit" class="btn btn-outline-success" formaction="{% url 'reporte_ventas_excel' %}">
+            <i class="fas fa-file-excel"></i> Descargar reporte Excel
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <hr>
+
+   
+    <div class="table-responsive">
+      <table id="myTable" class="table table-hover table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Nombre del producto</th>
+            <th>Fecha venta</th>
+            <th>Cantidad</th>
+            <th>Valor unitario</th>
+            <th>Valor total</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <div class="col-md-4" title="Filtrar por estado"></div>
+          <select id="estadoFilter" class="form-control">
+            <option value="">Filtrar estado (Todos)</option>
+            <option value="activado">Activo</option>
+            <option value="inactivado">Inactivo</option>
+          </select>
+        </div>
+        <tbody>
+          {% for venta in ventas %}
+          <tr class="{% cycle 'table-light' 'table-secondary' %}">
+            <td>{{ venta.id }}</td>
+            <td>{{ venta.nombreproducto }}</td>
+            <td>{{ venta.fechaventa }}</td>
+            <td>{{ venta.cantidad }}</td>
+            <td>{{ venta.valorunitario }}</td>
+            <td>{{ venta.valortotal }}</td>
+            <td>
+              <span class="badge {% if venta.activado %}bg-success{% else %}bg-secondary{% endif %}">
+                {{ venta.activado|yesno:"Activo,Inactivo" }}
+              </span>
+            </td>
+            <td>
+              <div class="btn-group" role="group">
+                {% if venta.activado %}
+                <a href="{% url 'desactivar_venta' venta.id %}" class="btn custom-btn-warning btn-separator"><i class="fas fa-ban"></i> Desactivar</a>
+                {% else %}
+                <a href="{% url 'activar_venta' venta.id %}" class="btn custom-btn-success btn-separator"><i class="fas fa-check-circle"></i> Activar</a>
+                {% endif %}
+                <a href="{% url 'editar_venta' venta.id %}" class="btn custom-btn-primary btn-separator"><i class="fas fa-edit"></i> Editar</a>
+                <a href="{% url 'eliminar_venta' venta.id %}" class="btn custom-btn-danger btn-delete btn-separator"><i class="fas fa-trash-alt"></i> Borrar</a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmModalLabel">Confirmación</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              ¿Estás seguro de que deseas eliminar esta Venta?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <a id="confirmDelete" href="#" class="btn btn-danger">Eliminar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <div class="card-footer text-muted">Footer</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<script src="{% static 'js/confirmacion_elim/cb_ventas.js' %}"></script>
+<script src="{% static 'js/mensajes_exito/exito.js' %}"></script>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/v/bs5/dt-2.1.6/datatables.min.js"></script>
+<script src="{% static 'js/Paginacion/paginacion.js' %}"></script>
+{% endblock %}
