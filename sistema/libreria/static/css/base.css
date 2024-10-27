@@ -269,7 +269,7 @@ footer {
 }
 
 .breadcrumb-item a {
-    color: #1a73e8; /* Azul vibrante */
+    color: #ffffff; /* Azul vibrante */
     text-decoration: none; /* Sin subrayado */
     transition: color 0.3s ease, text-shadow 0.3s ease; /* Transiciones suaves */
     background-color: rgba(26, 115, 232, 0.1); /* Fondo suave */
@@ -280,9 +280,9 @@ footer {
 }
 
 .breadcrumb-item a:hover {
-    color: #0c4da2; /* Azul más oscuro al pasar el ratón */
+    color: #ffffff; /* Azul más oscuro al pasar el ratón */
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
-    border-bottom: 2px solid #0c4da2; /* Borde inferior al pasar el ratón */
+    border-bottom: 2px solid #ffffff; /* Borde inferior al pasar el ratón */
 }
 
 .breadcrumb-item.active {

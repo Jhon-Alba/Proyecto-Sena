@@ -29,6 +29,15 @@
     />
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
     {% block extra_css %}{% endblock %}
+    <style>
+      body {
+          background-image: url("{% static 'img/inicio.jpg' %}");
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+      }
+  </style>
+  
   </head>
   <body>
     <header>
